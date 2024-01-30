@@ -1,0 +1,153 @@
+{
+  "target": "bmv2",
+  "p4info": "build/main.p4.p4info.txt",
+  "bmv2_json": "build/main.json",
+  "table_entries": [
+    {
+      "table": "MyIngress.ipv4_lpm",
+      "default_action": true,
+      "action_name": "MyIngress.drop",
+      "action_params": {}
+    },
+    {
+      "table": "MyIngress.ipv4_lpm",
+      "match": {
+        "hdr.ipv4.dstAddr": [
+          "10.100.0.0",
+          24
+        ]
+      },
+      "action_name": "MyIngress.ipv4_forward",
+      "action_params": {
+        "dstAddr": "08:00:00:00:01:00",
+        "port": 1
+      }
+    },
+    {
+      "table": "MyIngress.ipv4_lpm",
+      "match": {
+        "hdr.ipv4.dstAddr": [
+          "10.200.0.0",
+          24
+        ]
+      },
+      "action_name": "MyIngress.ipv4_forward",
+      "action_params": {
+        "dstAddr": "08:00:00:00:04:00",
+        "port": 2
+      }
+    },
+    {
+      "table": "MyIngress.ipv6_lpm",
+      "default_action": true,
+      "action_name": "MyIngress.drop",
+      "action_params": {}
+    },
+    {
+      "table": "MyIngress.ipv6_lpm",
+      "match": {
+        "hdr.ipv6.dstAddr": [
+          "2001:DB8:64::",
+          64
+        ]
+      },
+      "action_name": "MyIngress.ipv6_forward",
+      "action_params": {
+        "dstAddr": "08:00:00:00:01:00",
+        "port": 1
+      }
+    },
+    {
+      "table": "MyIngress.ipv6_lpm",
+      "match": {
+        "hdr.ipv6.dstAddr": [
+          "2001:DB8:C8::",
+          64
+        ]
+      },
+      "action_name": "MyIngress.ipv6_forward",
+      "action_params": {
+        "dstAddr": "08:00:00:00:04:00",
+        "port": 2
+      }
+    },
+    {
+      "table": "MyEgress.process_ioam_aggregation.ioam_aggr_push_exact",
+      "match": {
+        "hdr.ethernet.srcAddr": [
+          "08:00:00:00:02:00"
+        ]
+      },
+      "action_name": "MyEgress.process_ioam_aggregation.ioam_aggr_push",
+      "action_params": {
+        "aggregator": 1
+      }
+    },
+    {
+      "table": "MyEgress.process_ioam_aggregation.node_id",
+      "match": {
+        "hdr.ethernet.srcAddr": [
+          "08:00:00:00:02:00"
+        ]
+      },
+      "action_name": "MyEgress.process_ioam_aggregation.get_node_id",
+      "action_params": {
+        "nodeID": 2
+      }
+    },
+    {
+      "table": "MyEgress.process_ioam_tracing.ioam_trace_node_exact",
+      "match": {
+        "hdr.ethernet.srcAddr": [
+          "08:00:00:00:02:00"
+        ]
+      },
+      "action_name": "MyEgress.process_ioam_tracing.ioam_trace_node",
+      "action_params": {
+        "nodeID": 2
+      }
+    },
+    {
+      "table": "MyEgress.process_efficiency_indicator.carbon_metric_component_energy_mix",
+      "match": {
+        "hdr.ethernet.srcAddr": [
+          "08:00:00:00:02:00"
+        ]
+      },
+      "action_name": "MyEgress.process_efficiency_indicator.get_carbon_metric_energy_mix",
+      "action_params": {
+        "value": 20,
+        "weight": 2,
+        "inverse": 1
+      }
+    },
+    {
+      "table": "MyEgress.process_efficiency_indicator.carbon_metric_component_idle_power",
+      "match": {
+        "hdr.ethernet.srcAddr": [
+          "08:00:00:00:02:00"
+        ]
+      },
+      "action_name": "MyEgress.process_efficiency_indicator.get_carbon_metric_idle_power",
+      "action_params": {
+        "value": 200,
+        "weight": 1,
+        "inverse": 0
+      }
+    },
+    {
+      "table": "MyEgress.process_efficiency_indicator.carbon_metric_component_embedded_carbon",
+      "match": {
+        "hdr.ethernet.srcAddr": [
+          "08:00:00:00:02:00"
+        ]
+      },
+      "action_name": "MyEgress.process_efficiency_indicator.get_carbon_metric_embedded_carbon",
+      "action_params": {
+        "value": 2000,
+        "weight": 0,
+        "inverse": 0
+      }
+    }
+  ]
+}

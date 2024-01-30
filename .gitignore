@@ -1,0 +1,7 @@
+# Directories to exclude
+build/
+logs/
+pcaps/
+dev-network/tmp_runtimes/
+dev-network/demo/h*.json
+__pycache__/

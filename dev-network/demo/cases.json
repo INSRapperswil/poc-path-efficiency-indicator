@@ -1,0 +1,541 @@
+{
+  "paths": [
+    {
+      "id": 1,
+      "src": "h1",
+      "dst": "h2",
+      "nodes": [
+        {
+          "name": "s1",
+          "id": 1
+        },
+        {
+          "name": "s2",
+          "id": 2
+        },
+        {
+          "name": "s4",
+          "id": 4
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "src": "h1",
+      "dst": "h3",
+      "nodes": [
+        {
+          "name": "s1",
+          "id": 1
+        },
+        {
+          "name": "s3",
+          "id": 3
+        },
+        {
+          "name": "s4",
+          "id": 4
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "src": "h1",
+      "dst": "h4",
+      "nodes": [
+        {
+          "name": "s1",
+          "id": 1
+        },
+        {
+          "name": "s3",
+          "id": 3
+        },
+        {
+          "name": "s4",
+          "id": 4
+        },
+        {
+          "name": "s5",
+          "id": 5
+        },
+        {
+          "name": "s6",
+          "id": 6
+        }
+      ]
+    }
+  ],
+  "testcases": [
+    {
+      "name": "Demo with default control plane via path1",
+      "path": 1,
+      "protocol": "ipv6",
+      "num_packets": 5,
+      "ioam_aggregation": {
+        "aggregator": "sum"
+      },
+      "id": "d15b0dd2-9b80-11ee-99de-0800270cf606"
+    },
+    {
+      "name": "Demo with default control plane via path2",
+      "path": 2,
+      "protocol": "ipv6",
+      "num_packets": 5,
+      "ioam_aggregation": {
+        "aggregator": "sum"
+      },
+      "id": "d15b0dd3-9b80-11ee-99de-0800270cf606"
+    },
+    {
+      "name": "Demo with energy mix value in the morning via path1",
+      "path": 1,
+      "protocol": "ipv6",
+      "num_packets": 5,
+      "ioam_aggregation": {
+        "aggregator": "sum",
+        "parameter_patches": [
+          {
+            "switches": [
+              "s1",
+              "s2",
+              "s4"
+            ],
+            "table": "MyEgress.process_efficiency_indicator.carbon_metric_component_energy_mix",
+            "action": "MyEgress.process_efficiency_indicator.get_carbon_metric_energy_mix",
+            "parameters": [
+              {
+                "value": 30
+              }
+            ]
+          }
+        ]
+      },
+      "id": "d15b0dd4-9b80-11ee-99de-0800270cf606"
+    },
+    {
+      "name": "Demo with energy mix value at lunch time via path1",
+      "path": 1,
+      "protocol": "ipv6",
+      "num_packets": 5,
+      "ioam_aggregation": {
+        "aggregator": "sum",
+        "parameter_patches": [
+          {
+            "switches": [
+              "s1",
+              "s2",
+              "s4"
+            ],
+            "table": "MyEgress.process_efficiency_indicator.carbon_metric_component_energy_mix",
+            "action": "MyEgress.process_efficiency_indicator.get_carbon_metric_energy_mix",
+            "parameters": [
+              {
+                "value": 90
+              }
+            ]
+          }
+        ]
+      },
+      "id": "d15b0dd5-9b80-11ee-99de-0800270cf606"
+    },
+    {
+      "name": "Demo with energy mix value in the afternoon via path1",
+      "path": 1,
+      "protocol": "ipv6",
+      "num_packets": 5,
+      "ioam_aggregation": {
+        "aggregator": "sum",
+        "parameter_patches": [
+          {
+            "switches": [
+              "s1",
+              "s2",
+              "s4"
+            ],
+            "table": "MyEgress.process_efficiency_indicator.carbon_metric_component_energy_mix",
+            "action": "MyEgress.process_efficiency_indicator.get_carbon_metric_energy_mix",
+            "parameters": [
+              {
+                "value": 65
+              }
+            ]
+          }
+        ]
+      },
+      "id": "d15b0dd6-9b80-11ee-99de-0800270cf606"
+    },
+    {
+      "name": "Demo with energy mix value in the evening via path1",
+      "path": 1,
+      "protocol": "ipv6",
+      "num_packets": 5,
+      "ioam_aggregation": {
+        "aggregator": "sum",
+        "parameter_patches": [
+          {
+            "switches": [
+              "s1",
+              "s2",
+              "s4"
+            ],
+            "table": "MyEgress.process_efficiency_indicator.carbon_metric_component_energy_mix",
+            "action": "MyEgress.process_efficiency_indicator.get_carbon_metric_energy_mix",
+            "parameters": [
+              {
+                "value": 15
+              }
+            ]
+          }
+        ]
+      },
+      "id": "d15b0dd7-9b80-11ee-99de-0800270cf606"
+    },
+    {
+      "name": "Demo with energy mix value in the morning via path2",
+      "path": 2,
+      "protocol": "ipv6",
+      "num_packets": 5,
+      "ioam_aggregation": {
+        "aggregator": "sum",
+        "parameter_patches": [
+          {
+            "switches": [
+              "s1",
+              "s3",
+              "s4"
+            ],
+            "table": "MyEgress.process_efficiency_indicator.carbon_metric_component_energy_mix",
+            "action": "MyEgress.process_efficiency_indicator.get_carbon_metric_energy_mix",
+            "parameters": [
+              {
+                "value": 30
+              }
+            ]
+          }
+        ]
+      },
+      "id": "d15b0dd8-9b80-11ee-99de-0800270cf606"
+    },
+    {
+      "name": "Demo with energy mix value at lunch time via path2",
+      "path": 2,
+      "protocol": "ipv6",
+      "num_packets": 5,
+      "ioam_aggregation": {
+        "aggregator": "sum",
+        "parameter_patches": [
+          {
+            "switches": [
+              "s1",
+              "s3",
+              "s4"
+            ],
+            "table": "MyEgress.process_efficiency_indicator.carbon_metric_component_energy_mix",
+            "action": "MyEgress.process_efficiency_indicator.get_carbon_metric_energy_mix",
+            "parameters": [
+              {
+                "value": 90
+              }
+            ]
+          }
+        ]
+      },
+      "id": "d15b0dd9-9b80-11ee-99de-0800270cf606"
+    },
+    {
+      "name": "Demo with energy mix value in the afternoon via path2",
+      "path": 2,
+      "protocol": "ipv6",
+      "num_packets": 5,
+      "ioam_aggregation": {
+        "aggregator": "sum",
+        "parameter_patches": [
+          {
+            "switches": [
+              "s1",
+              "s3",
+              "s4"
+            ],
+            "table": "MyEgress.process_efficiency_indicator.carbon_metric_component_energy_mix",
+            "action": "MyEgress.process_efficiency_indicator.get_carbon_metric_energy_mix",
+            "parameters": [
+              {
+                "value": 65
+              }
+            ]
+          }
+        ]
+      },
+      "id": "d15b0dda-9b80-11ee-99de-0800270cf606"
+    },
+    {
+      "name": "Demo with energy mix value in the evening via path2",
+      "path": 2,
+      "protocol": "ipv6",
+      "num_packets": 5,
+      "ioam_aggregation": {
+        "aggregator": "sum",
+        "parameter_patches": [
+          {
+            "switches": [
+              "s1",
+              "s3",
+              "s4"
+            ],
+            "table": "MyEgress.process_efficiency_indicator.carbon_metric_component_energy_mix",
+            "action": "MyEgress.process_efficiency_indicator.get_carbon_metric_energy_mix",
+            "parameters": [
+              {
+                "value": 15
+              }
+            ]
+          }
+        ]
+      },
+      "id": "d15b0ddb-9b80-11ee-99de-0800270cf606"
+    },
+    {
+      "name": "Demo with energy mix value in the evening via path1 with the min aggregator",
+      "path": 1,
+      "protocol": "ipv6",
+      "num_packets": 5,
+      "ioam_aggregation": {
+        "aggregator": "min",
+        "parameter_patches": [
+          {
+            "switches": [
+              "s1",
+              "s2",
+              "s4"
+            ],
+            "table": "MyEgress.process_efficiency_indicator.carbon_metric_component_energy_mix",
+            "action": "MyEgress.process_efficiency_indicator.get_carbon_metric_energy_mix",
+            "parameters": [
+              {
+                "value": 15
+              }
+            ]
+          },
+          {
+            "switches": [
+              "s1",
+              "s2",
+              "s4"
+            ],
+            "table": "MyEgress.process_ioam_aggregation.ioam_aggr_push_exact",
+            "action": "MyEgress.process_ioam_aggregation.ioam_aggr_push",
+            "parameters": [
+              {
+                "aggregator": 2
+              }
+            ]
+          }
+        ]
+      },
+      "id": "cd476b44-9b82-11ee-99de-0800270cf606"
+    },
+    {
+      "name": "Demo with energy mix value in the evening via path1 with the max aggregator",
+      "path": 1,
+      "protocol": "ipv6",
+      "num_packets": 5,
+      "ioam_aggregation": {
+        "aggregator": "max",
+        "parameter_patches": [
+          {
+            "switches": [
+              "s1",
+              "s2",
+              "s4"
+            ],
+            "table": "MyEgress.process_efficiency_indicator.carbon_metric_component_energy_mix",
+            "action": "MyEgress.process_efficiency_indicator.get_carbon_metric_energy_mix",
+            "parameters": [
+              {
+                "value": 15
+              }
+            ]
+          },
+          {
+            "switches": [
+              "s1",
+              "s2",
+              "s4"
+            ],
+            "table": "MyEgress.process_ioam_aggregation.ioam_aggr_push_exact",
+            "action": "MyEgress.process_ioam_aggregation.ioam_aggr_push",
+            "parameters": [
+              {
+                "aggregator": 4
+              }
+            ]
+          }
+        ]
+      },
+      "id": "cd476b45-9b82-11ee-99de-0800270cf606"
+    },
+    {
+      "name": "Demo with energy mix value in the evening via path2 with the min aggregator",
+      "path": 2,
+      "protocol": "ipv6",
+      "num_packets": 5,
+      "ioam_aggregation": {
+        "aggregator": "min",
+        "parameter_patches": [
+          {
+            "switches": [
+              "s1",
+              "s3",
+              "s4"
+            ],
+            "table": "MyEgress.process_efficiency_indicator.carbon_metric_component_energy_mix",
+            "action": "MyEgress.process_efficiency_indicator.get_carbon_metric_energy_mix",
+            "parameters": [
+              {
+                "value": 15
+              }
+            ]
+          },
+          {
+            "switches": [
+              "s1",
+              "s3",
+              "s4"
+            ],
+            "table": "MyEgress.process_ioam_aggregation.ioam_aggr_push_exact",
+            "action": "MyEgress.process_ioam_aggregation.ioam_aggr_push",
+            "parameters": [
+              {
+                "aggregator": 2
+              }
+            ]
+          }
+        ]
+      },
+      "id": "cd476b46-9b82-11ee-99de-0800270cf606"
+    },
+    {
+      "name": "Demo with energy mix value in the evening via path2 with the max aggregator",
+      "path": 2,
+      "protocol": "ipv6",
+      "num_packets": 5,
+      "stop": true,
+      "ioam_aggregation": {
+        "aggregator": "max",
+        "parameter_patches": [
+          {
+            "switches": [
+              "s1",
+              "s3",
+              "s4"
+            ],
+            "table": "MyEgress.process_efficiency_indicator.carbon_metric_component_energy_mix",
+            "action": "MyEgress.process_efficiency_indicator.get_carbon_metric_energy_mix",
+            "parameters": [
+              {
+                "value": 15
+              }
+            ]
+          },
+          {
+            "switches": [
+              "s1",
+              "s3",
+              "s4"
+            ],
+            "table": "MyEgress.process_ioam_aggregation.ioam_aggr_push_exact",
+            "action": "MyEgress.process_ioam_aggregation.ioam_aggr_push",
+            "parameters": [
+              {
+                "aggregator": 4
+              }
+            ]
+          }
+        ]
+      },
+      "id": "cd476b47-9b82-11ee-99de-0800270cf606"
+    },
+    {
+      "name": "Demo with increased weight on the energy mix parameter via path1",
+      "path": 1,
+      "protocol": "ipv6",
+      "num_packets": 5,
+      "ioam_aggregation": {
+        "aggregator": "sum",
+        "parameter_patches": [
+          {
+            "switches": [
+              "s1",
+              "s2",
+              "s4"
+            ],
+            "table": "MyEgress.process_efficiency_indicator.carbon_metric_component_energy_mix",
+            "action": "MyEgress.process_efficiency_indicator.get_carbon_metric_energy_mix",
+            "parameters": [
+              {
+                "value": 50,
+                "weight": 2
+              }
+            ]
+          }
+        ]
+      },
+      "id": "cd476b48-9b82-11ee-99de-0800270cf606"
+    },
+    {
+      "name": "Demo with neutral weight on the energy mix parameter via path1",
+      "path": 1,
+      "protocol": "ipv6",
+      "num_packets": 5,
+      "ioam_aggregation": {
+        "aggregator": "sum",
+        "parameter_patches": [
+          {
+            "switches": [
+              "s1",
+              "s2",
+              "s4"
+            ],
+            "table": "MyEgress.process_efficiency_indicator.carbon_metric_component_energy_mix",
+            "action": "MyEgress.process_efficiency_indicator.get_carbon_metric_energy_mix",
+            "parameters": [
+              {
+                "value": 50,
+                "weight": 1
+              }
+            ]
+          }
+        ]
+      },
+      "id": "cd476b49-9b82-11ee-99de-0800270cf606"
+    },
+    {
+      "name": "Demo with negative weight on the energy mix parameter via path1",
+      "path": 1,
+      "protocol": "ipv6",
+      "num_packets": 5,
+      "ioam_aggregation": {
+        "aggregator": "sum",
+        "parameter_patches": [
+          {
+            "switches": [
+              "s1",
+              "s2",
+              "s4"
+            ],
+            "table": "MyEgress.process_efficiency_indicator.carbon_metric_component_energy_mix",
+            "action": "MyEgress.process_efficiency_indicator.get_carbon_metric_energy_mix",
+            "parameters": [
+              {
+                "value": 50,
+                "weight": 0
+              }
+            ]
+          }
+        ]
+      },
+      "id": "cd476b4a-9b82-11ee-99de-0800270cf606"
+    }
+  ]
+}
