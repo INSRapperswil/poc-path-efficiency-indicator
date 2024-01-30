@@ -1,0 +1,261 @@
+{
+  "paths": [
+    {
+      "id": 1,
+      "src": "h1",
+      "dst": "h2",
+      "nodes": [
+        {
+          "name": "s1",
+          "id": 1
+        },
+        {
+          "name": "s2",
+          "id": 2
+        },
+        {
+          "name": "s4",
+          "id": 4
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "src": "h1",
+      "dst": "h3",
+      "nodes": [
+        {
+          "name": "s1",
+          "id": 1
+        },
+        {
+          "name": "s3",
+          "id": 3
+        },
+        {
+          "name": "s4",
+          "id": 4
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "src": "h1",
+      "dst": "h4",
+      "nodes": [
+        {
+          "name": "s1",
+          "id": 1
+        },
+        {
+          "name": "s3",
+          "id": 3
+        },
+        {
+          "name": "s4",
+          "id": 4
+        },
+        {
+          "name": "s5",
+          "id": 5
+        },
+        {
+          "name": "s6",
+          "id": 6
+        }
+      ]
+    }
+  ],
+  "testcases": [
+    {
+      "name": "Test with default control plane on path H1 to H2",
+      "path": 1,
+      "protocol": "ipv6",
+      "num_packets": 1,
+      "ioam_aggregation": {
+        "aggregator": "sum"
+      },
+      "id": "4be8d9aa-8c75-11ee-99de-0800270cf606"
+    },
+    {
+      "name": "Test with default control plane on path H1 to H3",
+      "path": 2,
+      "protocol": "ipv6",
+      "num_packets": 1,
+      "ioam_aggregation": {
+        "aggregator": "sum"
+      },
+      "id": "4be8d9ab-8c75-11ee-99de-0800270cf606"
+    },
+    {
+      "name": "Test IOAM Trace overflow",
+      "path": 3,
+      "protocol": "ipv6",
+      "num_packets": 1,
+      "ioam_aggregation": {
+        "aggregator": "sum"
+      },
+      "id": "4be8d9ac-8c75-11ee-99de-0800270cf606"
+    },
+    {
+      "name": "Test with neutral weights for all parameters on path H1 to H2",
+      "path": 1,
+      "protocol": "ipv6",
+      "num_packets": 1,
+      "ioam_aggregation": {
+        "aggregator": "sum",
+        "parameter_patches": [
+          {
+            "switches": [
+              "s1",
+              "s2",
+              "s4"
+            ],
+            "table": "MyEgress.process_efficiency_indicator.carbon_metric_component_energy_mix",
+            "action": "MyEgress.process_efficiency_indicator.get_carbon_metric_energy_mix",
+            "parameters": [
+              {
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "switches": [
+              "s1",
+              "s2",
+              "s4"
+            ],
+            "table": "MyEgress.process_efficiency_indicator.carbon_metric_component_idle_power",
+            "action": "MyEgress.process_efficiency_indicator.get_carbon_metric_idle_power",
+            "parameters": [
+              {
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "switches": [
+              "s1",
+              "s2",
+              "s4"
+            ],
+            "table": "MyEgress.process_efficiency_indicator.carbon_metric_component_embedded_carbon",
+            "action": "MyEgress.process_efficiency_indicator.get_carbon_metric_embedded_carbon",
+            "parameters": [
+              {
+                "weight": 1
+              }
+            ]
+          }
+        ]
+      },
+      "id": "4be8d9ad-8c75-11ee-99de-0800270cf606"
+    },
+    {
+      "name": "Test with neutral weights for all parameters on path H1 to H2",
+      "path": 1,
+      "protocol": "ipv6",
+      "num_packets": 1,
+      "ioam_aggregation": {
+        "aggregator": "sum",
+        "parameter_patches": [
+          {
+            "switches": [
+              "s1",
+              "s2",
+              "s4"
+            ],
+            "table": "MyEgress.process_efficiency_indicator.carbon_metric_component_energy_mix",
+            "action": "MyEgress.process_efficiency_indicator.get_carbon_metric_energy_mix",
+            "parameters": [
+              {
+                "weight": 2
+              }
+            ]
+          },
+          {
+            "switches": [
+              "s1",
+              "s2",
+              "s4"
+            ],
+            "table": "MyEgress.process_efficiency_indicator.carbon_metric_component_idle_power",
+            "action": "MyEgress.process_efficiency_indicator.get_carbon_metric_idle_power",
+            "parameters": [
+              {
+                "weight": 2
+              }
+            ]
+          },
+          {
+            "switches": [
+              "s1",
+              "s2",
+              "s4"
+            ],
+            "table": "MyEgress.process_efficiency_indicator.carbon_metric_component_embedded_carbon",
+            "action": "MyEgress.process_efficiency_indicator.get_carbon_metric_embedded_carbon",
+            "parameters": [
+              {
+                "weight": 2
+              }
+            ]
+          }
+        ]
+      },
+      "id": "604e1b4e-95d5-11ee-85ca-0800270cf606"
+    },
+    {
+      "name": "Get minimum HEI on path H1 to H2",
+      "path": 1,
+      "protocol": "ipv6",
+      "num_packets": 1,
+      "ioam_aggregation": {
+        "aggregator": "min",
+        "parameter_patches": [
+          {
+            "switches": [
+              "s1",
+              "s2",
+              "s4"
+            ],
+            "table": "MyEgress.process_ioam_aggregation.ioam_aggr_push_exact",
+            "action": "MyEgress.process_ioam_aggregation.ioam_aggr_push",
+            "parameters": [
+              {
+                "aggregator": 2
+              }
+            ]
+          }
+        ]
+      },
+      "id": "77ddef58-8cfe-11ee-99de-0800270cf606"
+    },
+    {
+      "name": "Get maximum HEI on path H1 to H2",
+      "path": 1,
+      "protocol": "ipv6",
+      "num_packets": 1,
+      "ioam_aggregation": {
+        "aggregator": "max",
+        "parameter_patches": [
+          {
+            "switches": [
+              "s1",
+              "s2",
+              "s4"
+            ],
+            "table": "MyEgress.process_ioam_aggregation.ioam_aggr_push_exact",
+            "action": "MyEgress.process_ioam_aggregation.ioam_aggr_push",
+            "parameters": [
+              {
+                "aggregator": 4
+              }
+            ]
+          }
+        ]
+      },
+      "id": "a1c6a122-8d01-11ee-99de-0800270cf606"
+    }
+  ]
+}
