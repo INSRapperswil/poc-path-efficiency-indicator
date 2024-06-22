@@ -1,15 +1,21 @@
 BUILD_DIR = build
 PCAP_DIR = pcaps
 LOG_DIR = logs
+CONFIG_GEN_DIR = dev-network/utils/jinja2
 
 BMV2_SWITCH_EXE = simple_switch_grpc
 TOPO = dev-network/topology.json
+RESOURCES_FILE_NAME = resources.yaml
 
 P4C = p4c-bm2-ss
-P4C_ARGS += --p4runtime-files $(BUILD_DIR)/$(basename $@).p4.p4info.txt
+P4C_ARGS += --p4runtime-files $(BUILD_DIR)/$(basename $@).p4.p4info.txt --emit-externs
 
+BMV2_REPO = ${HOME}/git/ba/behavioral-model
+BMV2_EXTERN_DIR = ${BMV2_REPO}/externs/obj
+BMV2_EXTERNS = ${BMV2_EXTERN_DIR}/ipfix.so # comma separated list
+
+CONFIG_GEN_SCRIPT = $(CONFIG_GEN_DIR)/main.py
 RUN_SCRIPT = dev-network/utils/run_exercise.py
-TEST_SCRIPT = dev-network/utils/run_test_sender.py
 
 ifndef TOPO
 TOPO = topology.json
@@ -33,18 +39,24 @@ ifdef BMV2_SWITCH_EXE
 run_args += -b $(BMV2_SWITCH_EXE)
 endif
 
+# Set BMV2_EXTERNS to define BMV2 modules (shared libraries)
+ifdef BMV2_EXTERNS
+run_args += -m $(BMV2_EXTERNS)
+endif
+
 all: run
+
+config:
+	python3 $(CONFIG_GEN_SCRIPT) \
+	--template-dir $(CONFIG_GEN_DIR)/templates \
+	--mininet-template-name mininet_topology.j2 \
+	--bmv2-template-name bmv2_runtime.j2 \
+	--resources $(CONFIG_GEN_DIR)/resources/$(RESOURCES_FILE_NAME) \
+	--log-dir $(LOG_DIR) \
+	--out-dir dev-network/
 
 run: build
 	sudo python3 $(RUN_SCRIPT) -t $(TOPO) $(run_args)
-
-test: build
-	sudo bash ./run_tests.sh
-	sudo chown -R ${USER}:${USER} ./
-
-demo: build
-	sudo bash ./run_demo.sh
-	sudo chown -R ${USER}:${USER} ./
 
 stop:
 	sudo mn -c
@@ -60,3 +72,6 @@ dirs:
 clean: stop
 	rm -f *.pcap
 	rm -rf $(BUILD_DIR) $(PCAP_DIR) $(LOG_DIR)
+	rm -f ${TOPO}
+	rm -f dev-network/*-runtime.json
+	rm -f dev-network/traffic-generator-config.json

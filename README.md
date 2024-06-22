@@ -4,7 +4,7 @@
 
 ## Project Overview
 
-This research project, which started with our semester thesis, is based on the collaboration between the Eastern Switzerland University of Applied Sciences (OST) and Alexander Clemm, Futurewei Technologies, Inc. working closely together with the Internet Engineering Task Force (IETF).
+This research project, which started with our semester thesis, is based on the collaboration between the Eastern Switzerland University of Applied Sciences (OST) and Alexander Clemm from Sympotech, working closely together with the Internet Engineering Task Force (IETF).
 The project is part of broad-based research work done at IETF and focuses on a specific sub-area in the field of Green Networking Metrics.
 
 The project is mainly related to the RFC documents and drafts below.
@@ -23,7 +23,7 @@ The people involved are:
   - Reto Furrer
 - **Advisor:** Prof. Laurent Metzger (OST)
 - **Co-Advisor:** Severin Dellsperger (OST)
-- **External Partner:** Alexander Clemm (Futurewei Technologies, Inc.)
+- **External Partner:** Alexander Clemm (Sympotech)
 
 ### Situation
 
@@ -47,11 +47,10 @@ Additionally a guide is given on how to setup your own development environment i
 - **dev-network:** Directory containing:
   - Mininet topology definition
   - Static control plane definitions of the BMv2 porgrammable targets
-  - Python utilities to bootstrap the Mininet lab environment, to execute the test and the demo
+  - Python utilities to bootstrap the Mininet lab environment
+  - Resource definition to customize the network topology and adjust component values (inside *jinja2/resources*)
 - **includes:** Directory containing the P4 source included by the main.p4 file
 - **main.p4** Main P4 source file which defines the forwarding pipeline of the BMv2 targets in order to collect the path efficiency indicator
-- **run_demo.sh** Script called by the Makefile to run the demonstration
-- **run_tests.sh** Script called by the Makefile to run the tests
 
 Most of the utilities used are from [P4lang Tutorials](https://github.com/p4lang/tutorials) and slightly modified to fit our needs.
 
@@ -122,53 +121,120 @@ Install scapy using the following command.
 sudo apt-get install python3-scapy
 ```
 
+### Resource Definition
+
+Optionally you have the possibility to adjust the topology and configuration parameters of the test network.
+The resources are defined in *dev-network/utils/jinja2/resources/resources.yaml* in YAML format.
+
+You may define the parameters for the following objects.
+
+**To apply your changes in the resources file make sure to run `make config` before you start the test network.**
+
+#### Path Definition
+
+The network does not use a routing protocol.
+Therefore all routes are specified statically.
+Use the following format to define paths between hosts.
+
+```yaml
+paths:
+  - from: h1
+    to: h2
+    via: [s1, s2, s4]
+    return_route: true
+```
+
+With return route set to true a symmetric route will be setup in the oposite direction.
+
+#### Host Definition
+
+Hosts can be configured as follows.
+The commands specified are executed on host startup.
+
+```yaml
+hosts:
+  h1:
+    ipv4:
+      ip: 10.100.0.10
+      net: 10.100.0.0
+      prefix_len: 24
+    ipv6:
+      ip: 2001:DB8:64::10
+      net: "2001:DB8:64::"
+      prefix_len: 64
+    mac: 08:00:00:10:00:10
+    commands:
+      - "route add default gw 10.100.0.1 dev eth0"
+      - "arp -i eth0 -s 10.100.0.1 08:00:00:00:01:00"
+      - "python3 ./dev-network/utils/traffic_generator.py --ipv6 --src 'h1' --infinite --startup-delay 15 --logfile &"
+```
+
+#### Switch Definition
+
+Switches can be configured as follows.
+To adjust the energy metric of a switch you may adjust the hei (Hop Efficiency Indicator) value or modify the lei (Link Efficiency Indicator) value inside the port definitions.
+
+```yaml
+switches:
+  s1:
+    mac: 08:00:00:00:01:00
+    hei:
+      - data_param: 255
+        value: 10000
+    ioam:
+      namespace_id: 10
+      node_id: 1
+      aggregators: # 1 = SUM / 2 = MIN / 4 = MAX
+        - 1 # selected if last two bits of payload size are [00]
+        - 2 # selected if last two bits of payload size are [01]
+        - 1 # selected if last two bits of payload size are [10]
+        - 4 # selected if last two bits of payload size are [11]
+      data_param: 255
+    ports:
+      1:
+        neighbor: s2
+        lei: 10
+      2: 
+        neighbor: s3
+        lei: 20
+      3:
+        neighbor: h1
+        lei: 30
+```
+
+
 ### Run PoC
 
-To start and stop the development network with the BMv2 targets programmed with the current version of the P4 application the _make_ command can be used.
+To start and stop the test network with the BMv2 targets programmed with the current version of the P4 application the _make_ command can be used.
 
 ```sh
-# start development network
+# (optional) generate the configurations (only needed in case the resources file was modified)
+make config
+# start test network
 make run
-# stop the development network
+# stop test network (when inside the mininet console enter exit instead)
 make stop
-# run automated tests
-make test
-# run automated demos
-make demo
+# remove all generated files (incl. configurations)
+make clean
 ```
 
-#### Manual Interaction using make run
+#### Traffic Generation
 
-1. Start the environment using _make run_
-2. Send traffic from one host to another
-
-- In order to send 1 packet from h1 to h2 invoke the send.py utility on h1 using the following command wihtin the interactive mininet shell
+Using the default configuration all hosts start to send traffic to randomly selected destination hosts after a delay of 15 seconds.
+In case you would like to disable the automatic traffic generation remove the following lines from all commands sections in the host definition in the resources yaml file.
 
 ```sh
-h1 python3 ./dev-network/utils/testing/send.py --src "h1" --dst "h2" --count 1 --ipv6
+python3 ./dev-network/utils/traffic_generator.py <-- details omitted -->
 ```
 
-3. Checkout the wireshark captures located in the _pcaps_ folder.
+To send traffic manually e.g. from h1 to h2 you can execute the traffic generator utility manually within the mininet console using the following command.
 
-#### Run Tests
-
-Use the _make test_ command to run the test cases sepcified in _dev-network/test/cases.json_
-
-You should receive a similar output than the one below:
-
-```
-2024-01-30 10:17:50,254:INFO:TEST RUN STARTED (please wait this might take a few seconds)
-2024-01-30 10:17:58,695:INFO:TEST PASSED (id: 4be8d9aa-8c75-11ee-99de-0800270cf606)
-2024-01-30 10:18:01,214:INFO:TEST PASSED (id: 4be8d9ab-8c75-11ee-99de-0800270cf606)
-2024-01-30 10:18:03,792:INFO:TEST PASSED (id: 4be8d9ac-8c75-11ee-99de-0800270cf606)
-2024-01-30 10:18:06,503:INFO:TEST PASSED (id: 4be8d9ad-8c75-11ee-99de-0800270cf606)
-2024-01-30 10:18:09,275:INFO:TEST PASSED (id: 604e1b4e-95d5-11ee-85ca-0800270cf606)
-2024-01-30 10:18:12,042:INFO:TEST PASSED (id: 77ddef58-8cfe-11ee-99de-0800270cf606)
-2024-01-30 10:18:14,807:INFO:TEST PASSED (id: a1c6a122-8d01-11ee-99de-0800270cf606)
-2024-01-30 10:18:18,025:INFO:TEST RUN COMPLETED (detailed logs about the results are located at: /home/user/git/poc-path-efficiency-indicator/logs/testing/20240130101750)
+```sh
+h1 python3 ./dev-network/utils/traffic_generator.py --src "h1" --dst "h2"
 ```
 
-#### Run the Demo
+#### Wireshark Captures
 
-Use the _make demo_ command to run the demo cases sepcified in _dev-network/demo/cases.json_
-Once the command execution completed open the Jupyter Notebook at _dev-network/utils/demo.ipynb_ and press run all cells.
+All traffic sent via the test network is written to pcap files located in the *pcaps* directory.
+The directory contains the captures of all switches divided by interface and transmission direction.
+For example to view traffic which was sent via port 3 of switch 4 open the file *s4-eth3_out.pcap*.

@@ -71,7 +71,9 @@ def configureP4Switch(**switch_args):
 class ExerciseTopo(Topo):
     """The mininet topology class for the P4 tutorial exercises."""
 
-    def __init__(self, hosts, switches, links, log_dir, bmv2_exe, pcap_dir, **opts):
+    def __init__(
+        self, hosts, switches, links, log_dir, bmv2_exe, bmv2_modules, pcap_dir, **opts
+    ):
         Topo.__init__(self, **opts)
         host_links = []
         switch_links = []
@@ -90,6 +92,7 @@ class ExerciseTopo(Topo):
                     json_path=params["program"],
                     log_console=True,
                     pcap_dump=pcap_dir,
+                    modules=bmv2_modules,
                 )
             else:
                 # add default switch
@@ -145,6 +148,7 @@ class ExerciseRunner:
 
         switch_json : string // json of the compiled p4 example
         bmv2_exe    : string // name or path of the p4 switch binary
+        bmv2_modules : string // name or path of the bmv2 dynamic libraries
 
         topo : Topo object   // The mininet topology instance
         net : Mininet object // The mininet instance
@@ -169,6 +173,7 @@ class ExerciseRunner:
         pcap_dir,
         switch_json,
         bmv2_exe="simple_switch",
+        bmv2_modules=None,
         quiet=False,
     ):
         """Initializes some attributes and reads the topology json. Does not
@@ -202,6 +207,7 @@ class ExerciseRunner:
         self.pcap_dir = pcap_dir
         self.switch_json = switch_json
         self.bmv2_exe = bmv2_exe
+        self.bmv2_modules = bmv2_modules
 
     def run_exercise(self):
         """Sets up the mininet instance, programs the switches,
@@ -265,12 +271,12 @@ class ExerciseRunner:
             - Mininet instance stored as self.net
         """
         self.logger("Building mininet topology.")
-
         defaultSwitchClass = configureP4Switch(
             sw_path=self.bmv2_exe,
             json_path=self.switch_json,
             log_console=True,
             pcap_dump=self.pcap_dir,
+            modules=self.bmv2_modules,
         )
 
         self.topo = ExerciseTopo(
@@ -279,6 +285,7 @@ class ExerciseRunner:
             self.links,
             self.log_dir,
             self.bmv2_exe,
+            self.bmv2_modules,
             self.pcap_dir,
         )
 
@@ -433,6 +440,13 @@ def get_args():
         required=False,
         default="simple_switch",
     )
+    parser.add_argument(
+        "-m",
+        "--modules",
+        help="Comma separated list of paths to BMv2 shared libraries",
+        type=str,
+        required=False,
+    )
     return parser.parse_args()
 
 
@@ -447,6 +461,7 @@ if __name__ == "__main__":
         args.pcap_dir,
         args.switch_json,
         args.behavioral_exe,
+        args.modules,
         args.quiet,
     )
 

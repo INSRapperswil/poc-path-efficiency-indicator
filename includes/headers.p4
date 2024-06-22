@@ -61,7 +61,7 @@ header ioam_aggregation_t {
     bit<16> namespaceID;
     bit<4> flags;
     bit<12> reserved;
-    bit<24> dataParam; // identifies the type of data being aggregated
+    ioamDataParam_t dataParam; // identifies the type of data being aggregated
     ioamAggregator_t aggregator;
     ioamAggregate_t aggregate;
     ioamNodeID_t auxilDataNodeID;
@@ -87,7 +87,9 @@ header udp_t {
 }
 
 struct metadata {
+    ioamMeta_t ioamMeta;
     ioamAggrMeta_t ioamAggrMeta;
+    forwardingMeta_t forwardingMeta;
 }
 
 struct headers {

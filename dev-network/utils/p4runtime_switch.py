@@ -43,6 +43,7 @@ class P4RuntimeSwitch(P4Switch):
         device_id=None,
         enable_debugger=False,
         log_file=None,
+        modules=None,
         **kwargs
     ):
         Switch.__init__(self, name, **kwargs)
@@ -78,6 +79,8 @@ class P4RuntimeSwitch(P4Switch):
                 % (self.name, self.grpc_port)
             )
             exit(1)
+
+        self.modules = modules
 
         self.verbose = verbose
         logfile = "/tmp/p4s.{}.log".format(self.name)
@@ -129,6 +132,9 @@ class P4RuntimeSwitch(P4Switch):
             args.append("--thrift-port " + str(self.thrift_port))
         if self.grpc_port:
             args.append("-- --grpc-server-addr 0.0.0.0:" + str(self.grpc_port))
+        if self.modules:
+            args.append("--load-modules " + str(self.modules))
+
         cmd = " ".join(args)
         info(cmd + "\n")
 

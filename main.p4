@@ -5,7 +5,7 @@
 #include "includes/types.p4"
 #include "includes/headers.p4"
 #include "includes/parser.p4"
-#include "includes/ipv6_ext_header.p4"
+#include "includes/ioam_init.p4"
 #include "includes/ioam_tracing.p4"
 #include "includes/ioam_aggregation.p4"
 #include "includes/efficiency_indicator.p4"
@@ -30,18 +30,20 @@ control MyIngress(inout headers hdr,
         mark_to_drop(standard_metadata);
     }
 
-    action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
+    action ipv4_forward(macAddr_t mac, egressSpec_t port, bit<8> route_type) {
         standard_metadata.egress_spec = port;
         hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
-        hdr.ethernet.dstAddr = dstAddr;
+        hdr.ethernet.dstAddr = mac;
         hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
+        meta.forwardingMeta.routeType = route_type;
     }
 
-    action ipv6_forward(macAddr_t dstAddr, egressSpec_t port) {
+    action ipv6_forward(macAddr_t mac, egressSpec_t port, bit<8> route_type) {
         standard_metadata.egress_spec = port;
         hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
-        hdr.ethernet.dstAddr = dstAddr;
+        hdr.ethernet.dstAddr = mac;
         hdr.ipv6.hopLimit = hdr.ipv6.hopLimit - 1;
+        meta.forwardingMeta.routeType = route_type;
     }
 
     table ipv4_lpm {
@@ -51,7 +53,6 @@ control MyIngress(inout headers hdr,
         actions = {
             ipv4_forward;
             drop;
-            NoAction;
         }
         size = 1024;
         default_action = drop();
@@ -64,7 +65,6 @@ control MyIngress(inout headers hdr,
         actions = {
             ipv6_forward;
             drop;
-            NoAction;
         }
         size = 1024;
         default_action = drop();
@@ -88,10 +88,11 @@ control MyIngress(inout headers hdr,
 control MyEgress(inout headers hdr,
                  inout metadata meta,
                  inout standard_metadata_t standard_metadata) {
+
     apply {
         if (hdr.ipv6.isValid()) {
-            // Initialize IPv6 Extension Headers
-            process_ipv6_ext_header_init.apply(hdr, meta, standard_metadata);
+            // Initialize IOAM protocol related header in IPv6 extension header
+            process_ioam_init.apply(hdr, meta, standard_metadata);
 
             // IOAM Tracing
             process_ioam_tracing.apply(hdr, meta, standard_metadata);

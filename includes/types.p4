@@ -13,25 +13,33 @@ typedef bit<128> ip6Addr_t;
 
 // IOAM Types
 typedef bit<24> ioamNodeID_t;
+typedef bit<24> ioamDataParam_t;
+typedef bit<4> ioamFlag_t;
 typedef bit<8> ioamAggregator_t;
 typedef bit<32> ioamAggregate_t;
+typedef bit<16> ioamNamespace_t;
 
 struct ioamAggrMeta_t {
     ioamAggregate_t aggregate;
+    ioamDataParam_t dataParam;
+    bit<2> aggregator_selector;
+    bit<1> dataParamError;
+    bit<1> otherError;
+}
+
+struct ioamMeta_t {
+    ioamNamespace_t namespaceID;
     ioamNodeID_t nodeID;
+}
+
+struct forwardingMeta_t {
+    bit<8> routeType;
+    bit<8> reverseRouteType;
 }
 
 // UDP Types
 typedef bit<16> udpAddr_t;
 
-// Efficiency Indicator Types
-typedef bit<1> inverse_t;
-typedef bit<2> weight_t;
-typedef bit<32> parameter_t;
-typedef bit<5> parameterSize_t;
-typedef bit<16> component_t;
-typedef bit<15> normValue_t;
-
-typedef bit<7> energyMix_t;
-typedef bit<10> idlePower_t;
-typedef bit<16> embeddedCarbon_t;
+// IPFIX Types
+typedef bit<148> flowKey_t;
+typedef bit<20> flowLabel_t;
